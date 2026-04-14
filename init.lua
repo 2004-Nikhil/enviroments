@@ -38,13 +38,13 @@ opt.encoding       = "utf-8"
 opt.fileencoding   = "utf-8"
 opt.mouse          = "a"
 
--- Windows: set shell to PowerShell (comment out if using Git Bash / WSL)
--- opt.shell        = "pwsh"
--- opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
--- opt.shellredir   = "-RedirectStandardOutput %s -NoNewWindow -Wait"
--- opt.shellpipe    = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
--- opt.shellquote   = ""
--- opt.shellxquote  = ""
+opt.shell        = "C:/Program Files/Git/bin/bash.exe"
+opt.shellcmdflag = "-s"
+opt.shellredir   = "2>&1 | tee"
+opt.shellpipe    = "2>&1 | tee"
+opt.shellquote   = ""
+opt.shellxquote  = ""
+opt.shellslash   = true   -- use forward slashes in paths (required for bash on Windows)
 
 -- ── Bootstrap Lazy.nvim ─────────────────────────────────────
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -718,6 +718,7 @@ require("lazy").setup({
         open_mapping = [[<C-\>]],
         direction = "float",
         float_opts = { border = "curved" },
+        shell        = "C:/Program Files/Git/bin/bash.exe",
         -- On Windows with PowerShell:
         -- shell = "pwsh",
       })
