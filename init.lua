@@ -4,6 +4,8 @@
 --  Last updated: 2025
 -- ============================================================
 
+
+-- winget install BurntSushi.ripgrep.MSVC
 -- ── Leader key (must be set before Lazy) ────────────────────
 vim.g.mapleader      = " "
 vim.g.maplocalleader = " "
@@ -38,6 +40,8 @@ opt.encoding       = "utf-8"
 opt.fileencoding   = "utf-8"
 opt.mouse          = "a"
 
+-- Windows: use Git Bash as the default shell
+-- Adjust path if Git is installed elsewhere (check with: where git)
 opt.shell        = "C:/Program Files/Git/bin/bash.exe"
 opt.shellcmdflag = "-s"
 opt.shellredir   = "2>&1 | tee"
@@ -719,8 +723,6 @@ require("lazy").setup({
         direction = "float",
         float_opts = { border = "curved" },
         shell        = "C:/Program Files/Git/bin/bash.exe",
-        -- On Windows with PowerShell:
-        -- shell = "pwsh",
       })
     end,
   },
@@ -735,14 +737,14 @@ require("lazy").setup({
         theme = "doom",
         config = {
           header = {
-           "",
-           "  ██╗  ██╗███████╗██╗     ██╗      ██████╗     ███╗   ██╗██╗██╗  ██╗██╗  ██╗██╗██╗     ",
-           "  ██║  ██║██╔════╝██║     ██║     ██╔═══██╗    ████╗  ██║██║██║ ██╔╝██║  ██║██║██║     ",
-           "  ███████║█████╗  ██║     ██║     ██║   ██║    ██╔██╗ ██║██║█████╔╝ ███████║██║██║     ",
-           "  ██╔══██║██╔══╝  ██║     ██║     ██║   ██║    ██║╚██╗██║██║██╔═██╗ ██╔══██║██║██║     ",
-           "  ██║  ██║███████╗███████╗███████╗╚██████╔╝    ██║ ╚████║██║██║  ██╗██║  ██║██║███████╗",
-           "  ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝     ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚══════╝",
-           "",
+            "",
+            "  ██╗  ██╗███████╗██╗     ██╗      ██████╗     ███╗   ██╗██╗██╗  ██╗██╗  ██╗██╗██╗     ",
+            "  ██║  ██║██╔════╝██║     ██║     ██╔═══██╗    ████╗  ██║██║██║ ██╔╝██║  ██║██║██║     ",
+            "  ███████║█████╗  ██║     ██║     ██║   ██║    ██╔██╗ ██║██║█████╔╝ ███████║██║██║     ",
+            "  ██╔══██║██╔══╝  ██║     ██║     ██║   ██║    ██║╚██╗██║██║██╔═██╗ ██╔══██║██║██║     ",
+            "  ██║  ██║███████╗███████╗███████╗╚██████╔╝    ██║ ╚████║██║██║  ██╗██║  ██║██║███████╗",
+            "  ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝     ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚══════╝",
+            "",
           },
           center = {
             { icon = "  ", desc = "Find file",       key = "f", action = "Telescope find_files" },
@@ -793,6 +795,68 @@ require("lazy").setup({
     cmd   = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     build = function() vim.fn["mkdp#util#install"]() end,
     ft    = { "markdown" },
+  },
+
+  -- ── Notes (obsidian.nvim) ───────────────────────────────
+  -- Lightweight markdown-based notes. No external app needed;
+  -- notes are plain .md files you can open anywhere.
+  -- Vault location: ~/notes  (change to any folder you like)
+  -- bash mkdir ~/notes
+  -- mkdir ~/notes/daily
+  -- mkdir ~/notes/templates
+  -- That's C:\Users\Admin\notes on your machine. 
+  {
+    "epwalsh/obsidian.nvim",
+    version      = "*",
+    lazy         = false,
+    dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope.nvim" },
+    config = function()
+      require("obsidian").setup({
+        workspaces = {
+          { name = "personal", path = "~/notes" },
+        },
+        -- Daily notes go into a sub-folder
+        daily_notes = {
+          folder        = "daily",
+          date_format   = "%Y-%m-%d",
+          template      = nil,
+        },
+        -- Use Telescope for note search
+        picker = { name = "telescope.nvim" },
+        -- Pretty concealment (hides markdown syntax when cursor is elsewhere)
+        ui = {
+          enable          = true,
+          checkboxes = {
+            [" "] = { char = "󰄱", hl_group = "ObsidianTodo"     },
+            ["x"] = { char = "",  hl_group = "ObsidianDone"     },
+            [">"] = { char = "",  hl_group = "ObsidianRightArrow" },
+            ["~"] = { char = "󰰱", hl_group = "ObsidianTilde"    },
+          },
+        },
+        -- Note name = title slug
+        note_id_func = function(title)
+          local suffix = ""
+          if title ~= nil then
+            suffix = title:gsub(" ", "-"):gsub("[^A-Za-z0-9-]", ""):lower()
+          else
+            for _ = 1, 4 do
+              suffix = suffix .. string.char(math.random(65, 90))
+            end
+          end
+          return tostring(os.time()) .. "-" .. suffix
+        end,
+        -- Auto-generate frontmatter on new notes
+        disable_frontmatter = false,
+        templates = {
+          subdir     = "templates",
+          date_format = "%Y-%m-%d",
+          time_format = "%H:%M",
+        },
+        follow_url_func = function(url)
+          vim.fn.jobstart({ "cmd", "/c", "start", url })
+        end,
+      })
+    end,
   },
 
   -- ── Project management ──────────────────────────────────
@@ -904,6 +968,20 @@ keymap("n", "<leader>ql", function() require("persistence").load({ last = true }
 keymap("n", "<leader>ft", ":TodoTelescope<CR>", opts)
 
 -- Markdown preview
+
+-- Notes (obsidian.nvim)
+-- <leader>nn  new note     <leader>no  open note
+-- <leader>nf  find notes   <leader>nd  today's daily note
+-- <leader>ns  search text  <leader>nb  backlinks
+keymap("n", "<leader>nn", ":ObsidianNew<CR>",          { desc = "New note"          })
+keymap("n", "<leader>no", ":ObsidianOpen<CR>",         { desc = "Open in Obsidian"  })
+keymap("n", "<leader>nf", ":ObsidianQuickSwitch<CR>",  { desc = "Find note"         })
+keymap("n", "<leader>nd", ":ObsidianToday<CR>",        { desc = "Daily note"        })
+keymap("n", "<leader>ns", ":ObsidianSearch<CR>",       { desc = "Search notes"      })
+keymap("n", "<leader>nb", ":ObsidianBacklinks<CR>",    { desc = "Backlinks"         })
+keymap("n", "<leader>nt", ":ObsidianTags<CR>",         { desc = "Browse tags"       })
+keymap("n", "<leader>nT", ":ObsidianTemplate<CR>",     { desc = "Insert template"   })
+keymap("v", "<leader>nl", ":ObsidianLink<CR>",         { desc = "Link selection"    })
 keymap("n", "<leader>mp", ":MarkdownPreviewToggle<CR>", opts)
 
 -- Move lines
