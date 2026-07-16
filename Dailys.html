@@ -8,31 +8,32 @@
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" type="image/png" />
     <style>
       :root {
-        --bg-primary: #0a0a0a;
-        --bg-secondary: #111111;
-        --bg-card: #161616;
-        --text-primary: #ffffff;
-        --text-secondary: #a0a0a0;
-        --text-muted: #666666;
-        --accent: #00d4aa;
-        --accent-hover: #00b896;
-        --border: #222222;
-        --shadow: rgba(0, 0, 0, 0.5);
+        --bg-primary: #15171a;
+        --bg-secondary: #1a1c1f;
+        --bg-card: #1c1e22;
+        --text-primary: #e7e5e0;
+        --text-secondary: #9a9a94;
+        --text-muted: #6b6c68;
+        --accent: #7fa89a;
+        --accent-hover: #9bbfb2;
+        --border: #2a2c2f;
       }
-
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
-
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background: var(--bg-primary);
         color: var(--text-primary);
         line-height: 1.6;
         font-size: 15px;
-        overflow-x: hidden;
+      }
+
+      /* Only animate what needs to change on theme toggle, not the whole DOM */
+      body, .header, .resource-chip, .theme-toggle {
+        transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
       }
 
       /* Header */
@@ -43,9 +44,7 @@
         border-bottom: 1px solid var(--border);
         padding: 1.5rem 0;
         z-index: 100;
-        backdrop-filter: blur(10px);
       }
-
       .header-content {
         max-width: 1200px;
         margin: 0 auto;
@@ -54,14 +53,12 @@
         align-items: center;
         justify-content: space-between;
       }
-
       .logo {
         font-size: 1.5rem;
         font-weight: 600;
         color: var(--text-primary);
         letter-spacing: -0.02em;
       }
-
       .theme-toggle {
         background: transparent;
         border: 1px solid var(--border);
@@ -70,26 +67,27 @@
         border-radius: 6px;
         cursor: pointer;
         font-size: 0.875rem;
-        transition: all 0.2s ease;
       }
-
-      .theme-toggle:hover {
+      .theme-toggle:hover,
+      .theme-toggle:focus-visible {
         border-color: var(--accent);
         color: var(--accent);
       }
+      .theme-toggle:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
 
-      /* Main Content */
+      /* Main content */
       .container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 3rem 2rem;
       }
-
       .intro {
         text-align: center;
         margin-bottom: 4rem;
       }
-
       .intro h1 {
         font-size: 2.5rem;
         font-weight: 700;
@@ -97,7 +95,6 @@
         color: var(--text-primary);
         letter-spacing: -0.03em;
       }
-
       .intro p {
         font-size: 1.125rem;
         color: var(--text-secondary);
@@ -105,100 +102,38 @@
         margin: 0 auto;
       }
 
-      /* Resource Grid */
-      .resources-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .resource-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .resource-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: var(--accent);
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-      }
-
-      .resource-card:hover {
-        transform: translateY(-2px);
-        border-color: var(--border);
-        box-shadow: 0 8px 25px var(--shadow);
-      }
-
-      .resource-card:hover::before {
-        transform: scaleX(1);
-      }
-
-      .resource-header {
+      /* Resource grid — compact wrapped chips, no descriptions */
+      .resource-grid {
         display: flex;
-        align-items: center;
+        flex-wrap: wrap;
         gap: 0.75rem;
-        margin-bottom: 1rem;
       }
-
-      .resource-icon {
-        width: 24px;
-        height: 24px;
-        background: var(--accent);
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--bg-primary);
-      }
-
-      .resource-card h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 0;
-      }
-
-      .resource-card p {
-        color: var(--text-secondary);
-        margin-bottom: 1.5rem;
-        line-height: 1.5;
-      }
-
-      .resource-link {
+      .resource-chip {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        color: var(--accent);
+        gap: 0.65rem;
+        padding: 0.85rem 1.35rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
         text-decoration: none;
+        color: var(--text-primary);
+        font-size: 0.9375rem;
         font-weight: 500;
-        font-size: 0.875rem;
-        transition: color 0.2s ease;
       }
-
-      .resource-link:hover {
-        color: var(--accent-hover);
+      .resource-tag {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--accent);
       }
-
-      .resource-link::after {
-        content: '→';
-        transition: transform 0.2s ease;
+      .resource-chip:hover,
+      .resource-chip:focus-visible {
+        border-color: var(--accent);
+        color: var(--accent);
       }
-
-      .resource-link:hover::after {
-        transform: translateX(2px);
+      .resource-chip:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
       }
 
       /* Footer */
@@ -215,46 +150,42 @@
         .header-content {
           padding: 0 1rem;
         }
-
         .container {
           padding: 2rem 1rem;
         }
-
         .intro h1 {
           font-size: 2rem;
         }
-
-        .resources-grid {
-          grid-template-columns: 1fr;
-          gap: 1rem;
+        .resource-grid {
+          gap: 0.6rem;
         }
-
-        .resource-card {
-          padding: 1.5rem;
+        .resource-chip {
+          padding: 0.7rem 1.1rem;
+          font-size: 0.875rem;
         }
       }
 
-      /* Light theme variables */
+      /* Light theme variables (kept, muted and calm to match) */
       [data-theme="light"] {
-        --bg-primary: #ffffff;
-        --bg-secondary: #fafafa;
+        --bg-primary: #f7f6f3;
+        --bg-secondary: #efeee9;
         --bg-card: #ffffff;
-        --text-primary: #111111;
-        --text-secondary: #666666;
-        --text-muted: #999999;
-        --accent: #0066cc;
-        --accent-hover: #0052a3;
-        --border: #e5e5e5;
-        --shadow: rgba(0, 0, 0, 0.1);
+        --text-primary: #1e1f1c;
+        --text-secondary: #63645e;
+        --text-muted: #93938c;
+        --accent: #4f8271;
+        --accent-hover: #3d6a5c;
+        --border: #e2e0d8;
       }
 
-      /* Smooth transitions */
-      * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      /* Respect reduced-motion preference */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
       }
     </style>
   </head>
-
   <body>
     <header class="header">
       <div class="header-content">
@@ -264,139 +195,74 @@
         </button>
       </div>
     </header>
-
     <main class="container">
       <div class="intro">
         <h1>Daily Coding Practice</h1>
         <p>Curated resources and challenges to sharpen your programming skills every day</p>
       </div>
-
-      <div class="resources-grid">
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">LC</div>
-            <h3>LeetCode</h3>
-          </div>
-          <p>Master algorithmic thinking with thousands of coding problems. Perfect for technical interview preparation.</p>
-          <a href="https://leetcode.com/problems" target="_blank" class="resource-link">
-            Explore Problems
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">GFG</div>
-            <h3>GeeksforGeeks</h3>
-          </div>
-          <p>Comprehensive computer science portal with in-depth tutorials, articles, and daily coding challenges.</p>
-          <a href="https://www.geeksforgeeks.org/problem-of-the-day" target="_blank" class="resource-link">
-            Daily Problem
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">CF</div>
-            <h3>Codeforces</h3>
-          </div>
-          <p>Elite competitive programming platform featuring regular contests and challenging algorithmic problems.</p>
-          <a href="https://codeforces.com/contests" target="_blank" class="resource-link">
-            Join Contests
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">💼</div>
-            <h3>Company Questions</h3>
-          </div>
-          <p>Curated collection of coding questions asked by top tech companies during interviews.</p>
-          <a href="https://github.com/liquidslr/leetcode-company-wise-problems/blob/main" target="_blank" class="resource-link">
-            Browse Questions
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">HR</div>
-            <h3>HackerRank</h3>
-          </div>
-          <p>Develop your coding skills through challenges, competitions, and skill assessments.</p>
-          <a href="https://www.hackerrank.com" target="_blank" class="resource-link">
-            Start Practicing
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">⚔️</div>
-            <h3>CodeWars</h3>
-          </div>
-          <p>Train your coding skills by solving kata challenges and learning from community solutions.</p>
-          <a href="https://www.codewars.com" target="_blank" class="resource-link">
-            Accept Challenge
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">FCC</div>
-            <h3>freeCodeCamp</h3>
-          </div>
-          <p>Learn full-stack development through interactive lessons, projects, and earn free certifications.</p>
-          <a href="https://www.freecodecamp.org" target="_blank" class="resource-link">
-            Start Learning
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">📚</div>
-            <h3>MDN Web Docs</h3>
-          </div>
-          <p>The definitive resource for web development documentation, guides, and best practices.</p>
-          <a href="https://developer.mozilla.org" target="_blank" class="resource-link">
-            Read Docs
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">🏆</div>
-            <h3>Kaggle</h3>
-          </div>
-          <p>Compete in machine learning competitions and collaborate with the global data science community.</p>
-          <a href="https://www.kaggle.com/competitions" target="_blank" class="resource-link">
-            Join Competitions
-          </a>
-        </div>
-
-        <div class="resource-card">
-          <div class="resource-header">
-            <div class="resource-icon">🔍</div>
-            <h3>GitHub Explore</h3>
-          </div>
-          <p>Discover trending repositories, explore open source projects, and find your next coding inspiration.</p>
-          <a href="https://github.com/explore" target="_blank" class="resource-link">
-            Explore Projects
-          </a>
-        </div>
-      </div>
+      <div class="resource-grid" id="resource-grid"></div>
     </main>
-
     <footer class="footer">
       <p>&copy; <span id="year"></span> Coding Daily's. Crafted for developers, by developers.</p>
     </footer>
-
     <script>
-      // Set current year
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      // Theme toggle functionality
+      // Add a new site by adding one line here — no HTML editing needed.
+      const resources = [
+        ['LC', 'LeetCode', 'https://leetcode.com/problems'],
+        ['GFG', 'GeeksforGeeks', 'https://www.geeksforgeeks.org/problem-of-the-day'],
+        ['UV', 'OG UVA', 'https://onlinejudge.org/'],
+        ['CF', 'Codeforces', 'https://codeforces.com/contests'],
+        ['CS', 'CSES', 'https://cses.fi/problemset/'],
+        ['PE', 'Project Euler', 'https://projecteuler.net/'],
+        ['CO', 'Company Questions', 'https://github.com/liquidslr/leetcode-company-wise-problems/blob/main'],
+        ['HR', 'HackerRank', 'https://www.hackerrank.com'],
+        ['CW', 'CodeWars', 'https://www.codewars.com'],
+        ['FCC', 'freeCodeCamp', 'https://www.freecodecamp.org'],
+        ['MDN', 'MDN Web Docs', 'https://developer.mozilla.org'],
+        ['KG', 'Kaggle', 'https://www.kaggle.com/competitions'],
+        ['GH', 'GitHub Explore', 'https://github.com/explore'],
+        ['EX', 'Exercism', 'https://exercism.org/'],
+        ['FM', 'Frontend Mentor', 'https://www.frontendmentor.io/'],
+        ['DC', 'DevChallenges', 'https://devchallenges.io/'],
+        ['BYO', 'Build Your Own X', 'https://github.com/codecrafters-io/build-your-own-x'],
+        ['DEV', 'DEV Community', 'https://dev.to/'],
+        ['HN', 'Hacker News', 'https://news.ycombinator.com/'],
+        ['SO', 'Stack Overflow', 'https://stackoverflow.com/'],
+        ['RM', 'roadmap.sh', 'https://roadmap.sh/'],
+        ['CP', 'CodePen', 'https://codepen.io/'],
+        ['RP', 'Replit', 'https://replit.com/'],
+        ['AOC', 'Advent of Code', 'https://adventofcode.com/'],
+        ['JS', 'javascript.info', 'https://javascript.info/'],
+        ['CSS', 'CSS-Tricks', 'https://css-tricks.com/'],
+        ['SD', 'System Design Primer', 'https://github.com/donnemartin/system-design-primer'],
+        ['TC', 'TopCoder', 'https://www.topcoder.com/'],
+        ['AW', 'Awesome Lists', 'https://github.com/sindresorhus/awesome'],
+        ['IH', 'Indie Hackers', 'https://www.indiehackers.com/'],
+        ['TOP', 'The Odin Project', 'https://www.theodinproject.com/'],
+        ['CA', 'Codecademy', 'https://www.codecademy.com/'],
+        ['CI', 'Can I Use', 'https://caniuse.com/'],
+        ['RX', 'Regex101', 'https://regex101.com/'],
+        ['FIG', 'Figma', 'https://www.figma.com/'],
+        ['PM', 'Postman', 'https://www.postman.com/'],
+        ['DH', 'Docker Hub', 'https://hub.docker.com/'],
+        ['RPY', 'Real Python', 'https://realpython.com/'],
+        ['SM', 'Smashing Magazine', 'https://www.smashingmagazine.com/'],
+
+
+      ];
+
+      document.getElementById('resource-grid').innerHTML = resources
+        .map(([tag, name, url]) =>
+          `<a class="resource-chip" href="${url}" target="_blank"><span class="resource-tag">${tag}</span>${name}</a>`
+        )
+        .join('');
+
       function toggleTheme() {
         const body = document.body;
         const themeText = document.getElementById('theme-text');
-        
+
         if (body.getAttribute('data-theme') === 'light') {
           body.removeAttribute('data-theme');
           themeText.textContent = 'Light Mode';
@@ -408,46 +274,11 @@
         }
       }
 
-      // Load saved theme preference
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme === 'light') {
         document.body.setAttribute('data-theme', 'light');
         document.getElementById('theme-text').textContent = 'Dark Mode';
       }
-
-      // Smooth scroll for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        });
-      });
-
-      // Add subtle animations on scroll
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-      };
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      }, observerOptions);
-
-      // Observe resource cards for animation
-      document.querySelectorAll('.resource-card').forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
-        observer.observe(card);
-      });
     </script>
   </body>
 </html>
